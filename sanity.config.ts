@@ -12,7 +12,7 @@ import { structureTool } from "sanity/structure";
 import { apiVersion, dataset, projectId } from "./sanity/env";
 import { schema } from "./sanity/schemaTypes";
 import { structure } from "./sanity/structure";
-import { markdownSchema } from "sanity-plugin-markdown";
+const markdownSchema = (await import("sanity-plugin-markdown")).markdownSchema;
 
 export default defineConfig({
   basePath: "/studio",
