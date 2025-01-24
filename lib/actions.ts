@@ -4,6 +4,9 @@ import { auth } from "@/auth";
 import { parseServerActionResponse } from "./utils";
 import { writeClient } from "@/sanity/lib/write-client";
 import slugify from "slugify"
+import { client } from "@/sanity/lib/client";
+import { HAS_USER_APPLIED_QUERY,PENDING_APPLICATIONS_FOR_USER_PROJECTS_QUERY, UPDATE_APPLICATION_STATUS_MUTATION } from "@/sanity/lib/queries";
+
 
 export const createProject = async (state: any, form: FormData, pitch: string) => {
     const session = await auth();
@@ -52,3 +55,169 @@ export const createProject = async (state: any, form: FormData, pitch: string) =
         });
     }
 };
+
+export const applyToProject = async (state: any, form: FormData) => {
+    // 1. Check for an active user session
+    const session = await auth();
+  
+    if (!session) {
+      return parseServerActionResponse({
+        error: "Not signed in",
+        status: "ERROR",
+      });
+    }
+  
+    // 2. Extract data from the FormData
+    //    e.g. projectId, github, portfolio, message
+    const { projectId, github, portfolio, message } = Object.fromEntries(
+      Array.from(form)
+    );
+  
+    if (!projectId) {
+      return parseServerActionResponse({
+        error: "Missing projectId",
+        status: "ERROR",
+      });
+    }
+  
+    // 3. Build the Sanity document
+    try {
+      const applicationDoc = {
+        _type: "application",
+        project: {
+          _type: "reference",
+          _ref: projectId,
+        },
+        applicant: {
+          _type: "reference",
+          _ref: session.id, // your session's _id
+        },
+        github,       // e.g. "https://github.com/username"
+        portfolio,    // e.g. "https://myportfolio.com"
+        message,      // optional text
+        status: "pending", // default status
+      };
+  
+      // 4. Create the document in Sanity
+      const result = await writeClient.create(applicationDoc);
+  
+      // 5. Return the newly created document (plus success status)
+      return parseServerActionResponse({
+        ...result,
+        error: "",
+        status: "SUCCESS",
+      });
+    } catch (error) {
+      console.error(error);
+      return parseServerActionResponse({
+        error: JSON.stringify(error),
+        status: "ERROR",
+      });
+    }
+};
+
+export const checkUserApplicationStatus = async (projectId: string) => {
+    const session = await auth();
+    console.log(session);
+    if (!session) {
+      return parseServerActionResponse({
+        error: "Not signed in",
+        status: "ERROR",
+        applied: false,
+      });
+    }
+  
+    try {
+      const result = await client.fetch(HAS_USER_APPLIED_QUERY, {
+        userId: session.id,
+        projectId,
+      });
+
+  
+      return parseServerActionResponse({
+        error: "",
+        status: "SUCCESS",
+        applied: !!result, // Returns true if the user has applied
+      });
+    } catch (error) {
+      console.error("Error fetching application status:", error);
+      return parseServerActionResponse({
+        error: JSON.stringify(error),
+        status: "ERROR",
+        applied: false,
+      });
+    }
+};
+
+export const acceptApplication = async (applicationId: string) => {
+    const session = await auth();
+    
+    if (!session) {
+      return parseServerActionResponse({
+        error: "Not signed in",
+        status: "ERROR",
+      });
+    }
+  
+    try {
+      const existingApplication = await client.fetch(UPDATE_APPLICATION_STATUS_MUTATION, { applicationId });
+  
+      if (!existingApplication) {
+        return parseServerActionResponse({
+          error: "Application not found",
+          status: "ERROR",
+        });
+      }
+  
+      // Update status to accepted
+      await writeClient.patch(applicationId).set({ status: "accepted" }).commit();
+  
+      return parseServerActionResponse({
+        error: "",
+        status: "SUCCESS",
+      });
+    } catch (error) {
+      console.error("Error accepting application:", error);
+      return parseServerActionResponse({
+        error: JSON.stringify(error),
+        status: "ERROR",
+      });
+    }
+};
+
+export const rejectApplication = async (applicationId: string) => {
+    const session = await auth();
+    
+    if (!session) {
+      return parseServerActionResponse({
+        error: "Not signed in",
+        status: "ERROR",
+      });
+    }
+  
+    try {
+      const existingApplication = await client.fetch(UPDATE_APPLICATION_STATUS_MUTATION, { applicationId });
+  
+      if (!existingApplication) {
+        return parseServerActionResponse({
+          error: "Application not found",
+          status: "ERROR",
+        });
+      }
+  
+      // Update status to rejected
+      await writeClient.patch(applicationId).set({ status: "rejected" }).commit();
+  
+      return parseServerActionResponse({
+        error: "",
+        status: "SUCCESS",
+      });
+    } catch (error) {
+      console.error("Error rejecting application:", error);
+      return parseServerActionResponse({
+        error: JSON.stringify(error),
+        status: "ERROR",
+      });
+    }
+};
+  

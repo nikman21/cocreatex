@@ -8,6 +8,7 @@ import React, { Suspense } from 'react'
 import markdownit from 'markdown-it'
 import { Skeleton } from '@/components/ui/skeleton';
 import View from '@/components/View';
+import ApplyModal from '@/components/ApplyModal';
 
 export const experimental_ppr = true;
 
@@ -46,8 +47,14 @@ const Project = async ({ params }: { params: Promise<{ id: string}>}) => {
 
               <p className='category-tag'>{post.category}</p>
             </div>
+            <div>
 
-            <h3 className='text-30-bold'>Project Details</h3>
+            </div>
+            <div className='flex items-center justify-between'>
+                <h3 className='text-30-bold'>Project Details</h3>
+                <ApplyModal  id={id}/>
+            </div>
+            
             {parsedContent ? (
                 <article className='prose max-w-4xl break-all' dangerouslySetInnerHTML={{ __html: parsedContent}}/> 
             ): (

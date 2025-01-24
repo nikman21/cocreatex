@@ -1,59 +1,54 @@
-import { auth, signIn, signOut } from '@/auth'
+import { auth, signIn, signOut } from '@/auth';
 import { BadgePlus, LogOut } from 'lucide-react';
-import Link from 'next/link'
-import React from 'react'
+import Link from 'next/link';
+import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 const Navbar = async () => {
   const session = await auth();
 
   return (
-    <header className='px-5 py-3 bg-white shadow-sm font-work-sans'>
-      <nav className='flex justify-between itens-center'>
-        <Link href="/" className='text-2xl font-black'>CoCreateX</Link>
-        <div className='flex items-center gap-5 text-black'>
+    <header className="bg-white border-b-[5px] border-black shadow-100 px-6 py-4">
+      <nav className="flex justify-between items-center">
+        {/* Logo */}
+        <Link href="/" className="text-3xl font-black tracking-wide bg-black text-white px-4 py-2 rounded-lg shadow-100 hover:shadow-none transition-all">
+          CoCreateX
+        </Link>
+
+        {/* Right Side Content */}
+        <div className="flex items-center gap-5">
           {session && session?.user ? (
             <>
+              {/* Create Button */}
               <Link href="/project/create">
-              <span className="max-sm:hidden">Create</span>
-              <BadgePlus className="size-6 sm:hidden" />
+                <button className="flex items-center gap-2 border-[4px] border-black bg-primary text-white font-bold px-4 py-2 rounded-lg shadow-100 hover:shadow-none transition">
+                  <BadgePlus className="size-6" />
+                  <span className="max-sm:hidden">Create</span>
+                </button>
               </Link>
 
-              <form  action={async () => {
-                "use server";
-                
-                await signOut({ redirectTo: "/"})
-              
-              }}>
-                <button type='submit'>
-                <span className='max-sm:hidden'>Logout</span>
-                <LogOut className='size-6 sm:hidden text-red-500' />
+              {/* Logout */}
+              <form action={async () => { "use server"; await signOut({ redirectTo: "/" }) }}>
+                <button className="flex items-center gap-2 border-[4px] border-black bg-red-500 text-white font-bold px-4 py-2 rounded-lg shadow-100 hover:shadow-none transition">
+                  <LogOut className="size-6" />
+                  <span className="max-sm:hidden">Logout</span>
                 </button>
-                
               </form>
 
+              {/* User Profile */}
               <Link href={`/user/${session?.id}`}>
-                <Avatar className="size-10">
-                  <AvatarImage
-                    src={session?.user?.image || ""}
-                    alt={session?.user?.name || ""}
-                  />
+                <Avatar className="size-12 border-[3px] border-black shadow-100 hover:shadow-none transition">
+                  <AvatarImage src={session?.user?.image || ""} alt={session?.user?.name || ""} />
                   <AvatarFallback>
                     {session?.user?.name?.split(" ")[0][0]}
                     {session?.user?.name?.split(" ").slice(-1)[0][0]}
                   </AvatarFallback>
                 </Avatar>
               </Link>
-            </> 
+            </>
           ) : (
-            <form action={async () => { 
-              'use server'
-              
-              await signIn('github')
-              
-              }}>
-
-              <button type="submit">
+            <form action={async () => { 'use server'; await signIn('github') }}>
+              <button className="border-[4px] border-black bg-secondary text-white font-bold px-4 py-2 rounded-lg shadow-100 hover:shadow-none transition">
                 Login
               </button>
             </form>
@@ -61,7 +56,7 @@ const Navbar = async () => {
         </div>
       </nav>
     </header>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

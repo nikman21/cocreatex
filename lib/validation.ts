@@ -7,7 +7,7 @@ export const formSchema = z.object({
     link: z.string().url().refine(async (url) => {
         try {
             const res = await fetch(url, { method: "HEAD"})
-            const contentType = res.headers.get("content0type");
+            const contentType = res.headers.get("content-type");
 
             return contentType?.startsWith("image/")
         }catch {
@@ -16,3 +16,14 @@ export const formSchema = z.object({
     }),
     pitch: z.string().min(10),
 })
+
+export const applySchema = z.object({
+    github: z
+      .string()
+      .url({ message: "Please enter a valid GitHub URL" })
+      .min(1, { message: "GitHub URL is required" }),
+    discord: z
+        .string()
+        .min(3, "Discord username is required")
+
+  });
