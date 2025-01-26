@@ -146,6 +146,7 @@ export type Application = {
   status?: "pending" | "accepted" | "rejected";
   github?: string;
   portfolio?: string;
+  discord?: string;
   message?: string;
 };
 
