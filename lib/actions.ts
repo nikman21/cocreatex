@@ -5,8 +5,14 @@ import { parseServerActionResponse } from "./utils";
 import { writeClient } from "@/sanity/lib/write-client";
 import slugify from "slugify"
 import { client } from "@/sanity/lib/client";
-import { HAS_USER_APPLIED_QUERY,PENDING_APPLICATIONS_FOR_USER_PROJECTS_QUERY, UPDATE_APPLICATION_STATUS_MUTATION } from "@/sanity/lib/queries";
+import { GET_USER_BY_EMAIL, HAS_USER_APPLIED_QUERY, UPDATE_APPLICATION_STATUS_MUTATION } from "@/sanity/lib/queries";
 
+interface SanityUser {
+  id: string;
+  name: string;
+  email: string;
+  image?: string;
+}
 
 export const createProject = async (state: any, form: FormData, pitch: string) => {
     const session = await auth();
@@ -220,4 +226,12 @@ export const rejectApplication = async (applicationId: string) => {
       });
     }
 };
+
+export async function getUserByEmail(email: string) {
+  return await client.fetch(GET_USER_BY_EMAIL, { email });
+}
+
+
+
+
   

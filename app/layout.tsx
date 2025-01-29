@@ -3,7 +3,7 @@ import { Courier_Prime } from "next/font/google";
 import "./globals.css";
 import "easymde/dist/easymde.min.css";
 import { Toaster } from "@/components/ui/toaster";
-
+import { SessionProvider } from "next-auth/react";
 const courierPrime = Courier_Prime({
   subsets: ["latin"],
   weight: ["400", "700"],
@@ -23,9 +23,12 @@ export default function RootLayout({
   return (
     <html lang="en">
        <body className={`${courierPrime.className} antialiased`}>
+        <SessionProvider>
         {children}
 
         <Toaster />
+
+        </SessionProvider>
       </body>
     </html>
   );

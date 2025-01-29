@@ -198,6 +198,13 @@ export const USER_NOTIFICATIONS_QUERY = defineQuery(`
     }
   }
 `);
+
+export const GET_USER_BY_EMAIL= defineQuery(
+    `*[_type == "author" && email == $email][0]`
+);
   
+
+
+
 
 
