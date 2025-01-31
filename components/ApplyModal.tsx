@@ -26,7 +26,6 @@ const ApplyModal: React.FC<ApplyModalProps> = ({ id }) => {
     const fetchApplicationStatus = async () => {
       try {
         const response = await checkUserApplicationStatus(id);
-        console.log(response);
         if (response.applied) {
           setHasApplied(response.applied);
         }

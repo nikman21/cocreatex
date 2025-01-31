@@ -36,7 +36,7 @@ const Navbar = async () => {
               </form>
 
               {/* User Profile */}
-              <Link href={`/user/${session?.id}/profile`}>
+              <Link href={`/user/${session?.user.id}/profile`}>
                 <Avatar className="size-12 max-sm:size-11 border-[3px] border-black shadow-100 hover:shadow-none transition">
                   <AvatarImage src={session?.user?.image || ""} alt={session?.user?.name || ""} />
                   <AvatarFallback>

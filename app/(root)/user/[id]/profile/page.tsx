@@ -20,7 +20,6 @@ const Profile = async ({ params }: { params: Promise<{ id: string }> }) => {
 
     // Fetch Applications & Notifications on the Server
     const applications = await client.fetch(PENDING_APPLICATIONS_FOR_USER_PROJECTS_QUERY, { userId: id });
-    console.log(applications)
     const notifications = await client.fetch(USER_NOTIFICATIONS_QUERY, { userId: id });
 
     return (

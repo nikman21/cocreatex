@@ -53,8 +53,8 @@ export const { handlers, auth, signIn, signOut} = NextAuth({
           async session({ session, token }) {
             if (token.id) {
               session.user = {
-                ...session.user, // Keep existing user properties
-                id: token.id, // Ensure user ID is included
+                ...session.user, 
+                id: token.id, 
               };
             }
           

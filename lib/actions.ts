@@ -119,7 +119,6 @@ export const applyToProject = async (state: any, form: FormData) => {
 
 export const checkUserApplicationStatus = async (projectId: string) => {
     const session = await auth();
-    console.log(session);
     if (!session) {
       return parseServerActionResponse({
         error: "Not signed in",
