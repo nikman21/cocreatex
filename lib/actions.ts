@@ -7,12 +7,7 @@ import slugify from "slugify"
 import { client } from "@/sanity/lib/client";
 import { GET_USER_BY_EMAIL, HAS_USER_APPLIED_QUERY, UPDATE_APPLICATION_STATUS_MUTATION } from "@/sanity/lib/queries";
 
-interface SanityUser {
-  id: string;
-  name: string;
-  email: string;
-  image?: string;
-}
+
 
 export const createProject = async (state: any, form: FormData, pitch: string) => {
     const session = await auth();
@@ -96,12 +91,12 @@ export const applyToProject = async (state: any, form: FormData) => {
         },
         applicant: {
           _type: "reference",
-          _ref: session.id, // your session's _id
+          _ref: session.id, 
         },
-        github,       // e.g. "https://github.com/username"
-        portfolio,    // e.g. "https://myportfolio.com"
-        message,      // optional text
-        status: "pending", // default status
+        github,       
+        portfolio,    
+        message,      
+        status: "pending", 
       };
   
       // 4. Create the document in Sanity
