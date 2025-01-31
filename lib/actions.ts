@@ -5,7 +5,8 @@ import { parseServerActionResponse } from "./utils";
 import { writeClient } from "@/sanity/lib/write-client";
 import slugify from "slugify"
 import { client } from "@/sanity/lib/client";
-import { HAS_USER_APPLIED_QUERY,PENDING_APPLICATIONS_FOR_USER_PROJECTS_QUERY, UPDATE_APPLICATION_STATUS_MUTATION } from "@/sanity/lib/queries";
+import { GET_USER_BY_EMAIL, HAS_USER_APPLIED_QUERY, UPDATE_APPLICATION_STATUS_MUTATION } from "@/sanity/lib/queries";
+
 
 
 export const createProject = async (state: any, form: FormData, pitch: string) => {
@@ -90,12 +91,12 @@ export const applyToProject = async (state: any, form: FormData) => {
         },
         applicant: {
           _type: "reference",
-          _ref: session.id, // your session's _id
+          _ref: session.id, 
         },
-        github,       // e.g. "https://github.com/username"
-        portfolio,    // e.g. "https://myportfolio.com"
-        message,      // optional text
-        status: "pending", // default status
+        github,       
+        portfolio,    
+        message,      
+        status: "pending", 
       };
   
       // 4. Create the document in Sanity
@@ -220,4 +221,12 @@ export const rejectApplication = async (applicationId: string) => {
       });
     }
 };
+
+export async function getUserByEmail(email: string) {
+  return await client.fetch(GET_USER_BY_EMAIL, { email });
+}
+
+
+
+
   
