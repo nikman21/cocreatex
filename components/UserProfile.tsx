@@ -23,7 +23,7 @@ export default function UserProfile({ user }: UserProfileProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleStartChat = async () => {
-    if (!session?.user?.id) return;
+    if (!session?.user?.id || session.user.id === user._id) return; 
     const newChatId = await createChat(session.user.id, user._id);
     setChatId(newChatId);
     setIsOpen(true);
@@ -32,22 +32,33 @@ export default function UserProfile({ user }: UserProfileProps) {
   return (
     <div className="profile_card">
       <div className="profile_title">
-        <h3 className="text-24-black uppercase text-center line-clamp-1">{user.name}</h3>
+        <h3 className="text-24-black uppercase text-center line-clamp-1">
+          {user.name}
+        </h3>
       </div>
 
-      <Image src={user.image} alt={user.name} width={220} height={220} className="profile_image" />
+      <Image
+        src={user.image}
+        alt={user.name}
+        width={220}
+        height={220}
+        className="profile_image"
+      />
 
       <p className="text-30-extrabold mt-7 text-center">@{user?.username}</p>
       <p className="mt-1 text-center text-14-normal">{user?.bio}</p>
 
-      <div className="mt-4 flex justify-center">
-        <Button onClick={handleStartChat} className="bg-secondary text-white px-4 py-2">
-          Start Chat
-        </Button>
-      </div>
+     
+      {session?.user?.id && session.user.id !== user._id && (
+        <div className="mt-4 flex justify-center">
+          <Button onClick={handleStartChat} className="bg-secondary text-white px-4 py-2">
+            Start Chat
+          </Button>
+        </div>
+      )}
 
       
-      {isOpen && chatId && <Messaging chatId={chatId}  />}
+      {isOpen && chatId && <Messaging chatId={chatId} />}
     </div>
   );
 }

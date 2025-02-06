@@ -35,7 +35,7 @@ export const createProject = async (state: any, form: FormData, pitch: string) =
             },
             author: {
                 _type: "reference",
-                _ref: session?.id,
+                _ref: session?.user?.id,
             },
             pitch,
         };
@@ -57,6 +57,77 @@ export const createProject = async (state: any, form: FormData, pitch: string) =
     }
 };
 
+export const updateProject = async (
+  projectId: string,
+  form: FormData,
+  pitch: string
+) => {
+  const session = await auth();
+  if (!session)
+    return parseServerActionResponse({
+      error: "Not signed in",
+      status: "ERROR",
+    });
+
+
+  const { title, description, category, link } = Object.fromEntries(
+    Array.from(form).filter(([key]) => key !== "pitch")
+  );
+  const slug = slugify(title as string, { lower: true, strict: true });
+  
+  try {
+    const project = {
+      title,
+      description,
+      category,
+      image: link,
+      slug: {
+        _type: "slug", 
+        current: slug,
+      },
+      pitch,
+    };
+
+    
+    const result = await writeClient.patch(projectId).set(project).commit();
+
+    return parseServerActionResponse({
+      ...result,
+      error: "",
+      status: "SUCCESS",
+    });
+  } catch (error: any) {
+    console.error("Update error:", error);
+    return parseServerActionResponse({
+      error: JSON.stringify(error),
+      status: "ERROR",
+    });
+  }
+};
+
+export const deleteProject = async (projectId: string) => {
+  const session = await auth();
+  if (!session)
+    return parseServerActionResponse({
+      error: "Not signed in",
+      status: "ERROR",
+    });
+
+  try {
+    await writeClient.delete(projectId);
+    return parseServerActionResponse({
+      error: "",
+      status: "SUCCESS",
+    });
+  } catch (error: any) {
+    console.error("Delete error:", error);
+    return parseServerActionResponse({
+      error: JSON.stringify(error),
+      status: "ERROR",
+    });
+  }
+};
+
 export const applyToProject = async (state: any, form: FormData) => {
     // 1. Check for an active user session
     const session = await auth();
@@ -69,7 +140,6 @@ export const applyToProject = async (state: any, form: FormData) => {
     }
   
     // 2. Extract data from the FormData
-    //    e.g. projectId, github, portfolio, message
     const { projectId, github, portfolio, message } = Object.fromEntries(
       Array.from(form)
     );
@@ -91,7 +161,7 @@ export const applyToProject = async (state: any, form: FormData) => {
         },
         applicant: {
           _type: "reference",
-          _ref: session.id, 
+          _ref: session.user.id, 
         },
         github,       
         portfolio,    
@@ -129,7 +199,7 @@ export const checkUserApplicationStatus = async (projectId: string) => {
   
     try {
       const result = await client.fetch(HAS_USER_APPLIED_QUERY, {
-        userId: session.id,
+        userId: session.user.id,
         projectId,
       });
 

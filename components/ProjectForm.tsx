@@ -38,7 +38,7 @@ const ProjectForm = () => {
 
     const handleFormSubmit = async (prevState: any, formData: FormData) => {
         try {
-            // Validate form data (without image URL first)
+            
             const formValues = {
                 title: formData.get("title") as string,
                 description: formData.get("description") as string,
@@ -48,7 +48,7 @@ const ProjectForm = () => {
 
             await formSchema.parseAsync(formValues);
 
-            // Validate file
+            
             if (!file) {
                 toast({
                     title: "Error",
