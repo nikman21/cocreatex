@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-primary border-[5px] border-black py-6 text-white text-center shadow-100 rounded-t-[20px]">
+    <footer className="w-full bg-primary border-[5px] border-black py-6 text-white text-center shadow-100">
       <p className="text-lg font-bold">
         &copy; 2025 CoCreateX. All rights reserved.
       </p>
