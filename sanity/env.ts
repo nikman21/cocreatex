@@ -13,6 +13,10 @@ export const projectId = assertValue(
 
 export const token = process.env.SANITY_WRITE_TOKEN;
 
+// Tokens for live preview functionality
+export const readToken = process.env.SANITY_READ_TOKEN;
+export const browserToken = process.env.NEXT_PUBLIC_SANITY_READ_TOKEN;
+
 function assertValue<T>(v: T | undefined, errorMessage: string): T {
   if (v === undefined) {
     throw new Error(errorMessage)
